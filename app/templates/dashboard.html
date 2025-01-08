@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Your Files</h2>
+<div class="row">
+    {% for file in files %}
+    <div class="col-md-4 mb-3">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">{{ file.filename }}</h5>
+                <p class="card-text">
+                    Version: {{ file.version }}<br>
+                    Uploaded: {{ file.created_at.strftime('%Y-%m-%d %H:%M') }}
+                </p>
+                <form method="POST" action="{{ url_for('main.download', file_id=file.id) }}" class="mb-2">
+                    <div class="input-group">
+                        <input type="password" name="password" class="form-control" 
+                               placeholder="Decryption Password" required>
+                        <button type="submit" class="btn btn-primary">Download</button>
+                    </div>
+                </form>
+                <div class="btn-group">
+                    <a href="{{ url_for('main.share', file_id=file.id) }}" 
+                       class="btn btn-secondary">Share</a>
+                    <a href="{{ url_for('main.audit_log', file_id=file.id) }}" 
+                       class="btn btn-info">Audit Log</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% if shared_files %}
+<h2 class="mt-4">Shared with You</h2>
+<div class="row">
+    {% for file in shared_files %}
+    <div class="col-md-4 mb-3">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">{{ file.filename }}</h5>
+                <p class="card-text">
+                    Owned by: {{ file.owner.username }}<br>
+                    Version: {{ file.version }}
+                </p>
+                <form method="POST" action="{{ url_for('main.download', file_id=file.id) }}">
+                    <div class="input-group">
+                        <input type="password" name="password" class="form-control" 
+                               placeholder="Decryption Password" required>
+                        <button type="submit" class="btn btn-primary">Download</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endblock %}
